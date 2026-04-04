@@ -3,8 +3,10 @@ pipeline {
 
     environment {
         FRONTEND_IMAGE = "mern-frontend:jenkins"
+        BACKEND_IMAGE  = "mern-backend:jenkins"
+
         REACT_APP_BACKEND_URL = "http://localhost:5000/api"
-        BACKEND_IMAGE = "mern-backend:jenkins"
+
         PORT = "5000"
         MONGODB_URL = "mongodb://mongo:27017/taskdb"
     }
@@ -19,18 +21,25 @@ pipeline {
 
         stage('Prepare .env') {
             steps {
+                script {
+                    writeFile file: 'backend/.env', text: """PORT=${PORT}
+MONGODB_URL=${MONGODB_URL}
+"""
+
+                    writeFile file: 'frontend/.env', text: """REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+"""
+                }
+            }
+        }
+
+        stage('Debug .env (Optional)') {
+            steps {
                 sh '''
-                mkdir -p backend
-                mkdir -p frontend
+                echo "===== Backend .env ====="
+                cat backend/.env
 
-                cat > backend/.env <<EOF
-                PORT=$PORT
-                MONGODB_URL=$MONGODB_URL
-                EOF
-
-                cat > frontend/.env <<EOF
-                REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
-                EOF
+                echo "===== Frontend .env ====="
+                cat frontend/.env
                 '''
             }
         }
@@ -50,13 +59,25 @@ pipeline {
         stage('Run with Docker Compose') {
             steps {
                 sh '''
-                echo "Starting MERN app with docker compose..."
-                docker compose up -d
+                echo "Stopping old containers (if any)..."
+                docker compose down || true
 
-                echo "Showing running containers"
+                echo "Starting MERN app with docker compose..."
+                docker compose up -d --build
+
+                echo "Showing running containers..."
                 docker ps
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Pipeline completed successfully!"
+        }
+        failure {
+            echo "❌ Pipeline failed!"
         }
     }
 }
