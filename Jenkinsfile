@@ -62,8 +62,8 @@ MONGODB_URL=${MONGODB_URL}
                 echo "Stopping old containers (if any)..."
                 docker compose down || true
 
-                echo "Starting MERN app with docker compose..."
-                docker compose up -d 
+                echo "Starting MERN app with docker compose (no build)..."
+                docker compose up -d --no-build
 
                 echo "Showing running containers..."
                 docker ps
