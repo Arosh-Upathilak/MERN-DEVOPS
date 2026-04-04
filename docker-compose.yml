@@ -9,10 +9,8 @@ services:
       - mern-net
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend
+    image: mern-backend:jenkins   
+    container_name: mern-backend  
     restart: unless-stopped
     env_file:
       - ./backend/.env
@@ -24,10 +22,8 @@ services:
       - mern-net
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
+    image: mern-frontend:jenkins  
+    container_name: mern-frontend 
     restart: unless-stopped
     env_file:
       - ./frontend/.env
