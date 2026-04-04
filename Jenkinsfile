@@ -13,7 +13,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/Arosh-Upathilak/DEVOPS.git', branch: 'main'
+                git url: 'https://github.com/Arosh-Upathilak/MERN-DEVOPS.git', branch: 'main'
             }
         }
 
