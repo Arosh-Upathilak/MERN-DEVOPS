@@ -52,10 +52,10 @@ MONGODB_URL=${MONGODB_URL}
             steps{
                 sh'''
                 echo "Stopping old containers (if any)..."
-                docker compose down || true
+                docker-compose down || true
 
                 echo "Starting MERN app..."
-                docker compose up -d --build
+                docker-compose up -d --build
 
                 '''
             }
