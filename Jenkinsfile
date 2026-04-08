@@ -42,10 +42,32 @@ MONGODB_URL=${MONGODB_URL}
 
                 echo "Building frontend image"
                 docker build -t ${params.FRONTEND_IMAGE} \\
-                  --build-arg REACT_APP_BACKEND_URL=http://localhost:5000/ \\
+                  --build-arg REACT_APP_BACKEND_URL=/api \\
                   ./frontend
                 """
             }
+        }
+
+        stage('Docker compose Up'){
+            steps{
+                sh'''
+                echo "Stopping old containers (if any)..."
+                docker compose down || true
+
+                echo "Starting MERN app..."
+                docker-compose up -build
+
+                '''
+            }
+        }
+    }
+
+    post{
+        success{
+            echo "Pipeline completed successfully!"
+        }
+        failure{
+            echo "Pipeline failed!"
         }
     }
 }
