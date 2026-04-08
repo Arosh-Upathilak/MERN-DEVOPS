@@ -51,10 +51,7 @@ MONGODB_URL=${MONGODB_URL}
         stage('Docker compose Up'){
             steps{
                 sh'''
-                 echo "Cleaning old containers..."
-                docker rm -f $(docker ps -aq) || true
-
-
+                
                 echo "Stopping old containers (if any)..."
                 docker-compose down || true
 
