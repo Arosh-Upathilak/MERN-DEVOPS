@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    /*parameters {
+        string(name: 'FRONTEND_IMAGE', defaultValue: 'mern-frontend:jenkins', description: 'Frontend image')
+        string(name: 'BACKEND_IMAGE', defaultValue: 'mern-backend:jenkins', description: 'Backend image')
+    }*/
 
     stages {
         stage('Checkout Code') {
@@ -26,6 +30,20 @@ MONGODB_URL=${MONGODB_URL}
                 echo "Checking parameters"
                 echo "FRONTEND_IMAGE = ${params.FRONTEND_IMAGE}"
                 echo "BACKEND_IMAGE = ${params.BACKEND_IMAGE}"
+                """
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh """
+                echo "Building backend image"
+                docker build -t ${params.BACKEND_IMAGE} ./backend
+
+                echo "Building frontend image"
+                docker build -t ${params.FRONTEND_IMAGE} \\
+                  --build-arg REACT_APP_BACKEND_URL=http://localhost:5000/ \\
+                  ./frontend
                 """
             }
         }
