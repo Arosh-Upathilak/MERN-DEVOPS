@@ -55,7 +55,7 @@ MONGODB_URL=${MONGODB_URL}
                 docker compose down || true
 
                 echo "Starting MERN app..."
-                docker-compose up -build
+                docker compose up -d --build
 
                 '''
             }
