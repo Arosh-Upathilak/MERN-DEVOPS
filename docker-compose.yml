@@ -9,30 +9,45 @@ services:
       - mern-net
 
   backend:
-    image: mern-backend:jenkins   
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: mern-backend  
     restart: unless-stopped
     env_file:
       - ./backend/.env
-    ports:
-      - "5000:5000"
     depends_on:
       - mongo
     networks:
       - mern-net
 
   frontend:
-    image: mern-frontend:jenkins  
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile 
+      args:
+        REACT_APP_BACKEND_URL: "/api"
     container_name: mern-frontend 
     restart: unless-stopped
-    env_file:
-      - ./frontend/.env
-    ports:
-      - "3000:3000"
     depends_on:
       - backend
     networks:
       - mern-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - mern-net       
+
 
 volumes:
   mongo-data:
